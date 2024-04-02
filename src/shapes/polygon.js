@@ -1,20 +1,21 @@
-var assign = require('object-assign');
-var Shape = require('../mixins/shape');
-var Styles = require('../mixins/styles');
-var Vector = require('../vector').default;
-var Utils = require('../utils').default;
-var svg = require('virtual-dom/virtual-hyperscript/svg');
+// @ts-nocheck
+import Shape from '../mixins/shape';
+import Styles from '../mixins/styles';
+import Vector from '../vector';
+import Utils from '../utils';
+import svg from 'virtual-dom/virtual-hyperscript/svg';
 
-var Polygon = function (x, y) {
-  this.shape();
-  this.styles();
-  this.state.vectors = [];
-  if (typeof x !== 'undefined') this.state.x = x;
-  if (typeof y !== 'undefined') this.state.y = y;
-};
+var { assign } = Object;
 
-Polygon.prototype = {
-  lineTo: function (x, y) {
+class Polygon {
+  constructor(x, y) {
+    this.shape();
+    this.styles();
+    this.state.vectors = [];
+    if (typeof x !== 'undefined') this.state.x = x;
+    if (typeof y !== 'undefined') this.state.y = y;
+  }
+  lineTo(x, y) {
     if (x instanceof Vector) {
       this.state.vectors.push(x);
     } else {
@@ -22,9 +23,8 @@ Polygon.prototype = {
     }
     this.changed();
     return this;
-  },
-
-  length: function () {
+  }
+  length() {
     var len = 0;
     for (var i = 0; i < this.state.vectors.length; i++) {
       var start = this.state.vectors[i];
@@ -32,9 +32,8 @@ Polygon.prototype = {
       len += stop.sub(start).length();
     }
     return len;
-  },
-
-  vectorAtLength: function (len) {
+  }
+  vectorAtLength(len) {
     var tmpLen = 0;
 
     for (var i = 0; i < this.state.vectors.length; i++) {
@@ -52,13 +51,11 @@ Polygon.prototype = {
     }
 
     return this.state.vectors[0].copy();
-  },
-
-  vectorAt: function (scalar) {
+  }
+  vectorAt(scalar) {
     return this.vectorAtLength(this.length() * scalar);
-  },
-
-  area: function () {
+  }
+  area() {
     var area = 0;
     for (var i = 0; i < this.state.vectors.length - 1; i++) {
       area +=
@@ -67,9 +64,8 @@ Polygon.prototype = {
     }
     area /= 2;
     return Math.abs(area);
-  },
-
-  bounds: function () {
+  }
+  bounds() {
     var xmax = undefined;
     var ymax = undefined;
     var xmin = undefined;
@@ -92,9 +88,8 @@ Polygon.prototype = {
       width: xmax - xmin,
       height: ymax - ymin
     };
-  },
-
-  centroid: function () {
+  }
+  centroid() {
     var areaAcc = 0.0;
     var xAcc = 0.0;
     var yAcc = 0.0;
@@ -109,9 +104,8 @@ Polygon.prototype = {
     var x = xAcc / (6.0 * areaAcc);
     var y = yAcc / (6.0 * areaAcc);
     return new Vector(x, y);
-  },
-
-  toPolygon: function (opts, parent) {
+  }
+  toPolygon(opts, parent) {
     if (opts && opts.spacing) {
       var poly = new Polygon(this.state.x, this.state.y);
       var len = this.length();
@@ -128,9 +122,8 @@ Polygon.prototype = {
     }
 
     return this;
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Polygon();
     copy.state.vectors = this.state.vectors.map(function (v) {
       return v.copy();
@@ -138,17 +131,15 @@ Polygon.prototype = {
     Utils.copyMixinVars(this, copy);
     Utils.groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
+  }
   // Code from ContainsPoint function here:
   // http://polyk.ivank.net
-  contains: function (x, y) {
+  contains(x, y) {
     // get stage position
     var addPos = this.stagepos();
 
     // map array of vectors to flat array of xy numbers
     // This might be slow, so let's rewrite this at some point.
-
     var p = Utils.flatten(
       this.state.vectors.map(function (vector) {
         return [addPos.x + vector.x, addPos.y + vector.y];
@@ -193,18 +184,16 @@ Polygon.prototype = {
     }
 
     return (depth & 1) == 1;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     this.scaleStyles(scalar);
     this.state.vectors = this.state.vectors.map(function (vec) {
       return vec.multiply(scalar);
     });
     this.changed();
     return this;
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     var attr = {
       points: this.state.vectors
         .map(function (vec) {
@@ -216,8 +205,8 @@ Polygon.prototype = {
     this.stylesAttributes(attr);
     return svg('polygon', attr);
   }
-};
+}
 
 assign(Polygon.prototype, Shape, Styles, { type: 'polygon' });
 
-module.exports = Polygon;
+export default Polygon;

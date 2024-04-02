@@ -1,10 +1,13 @@
-var assign = require('object-assign');
-var Shape = require('../mixins/shape');
-var Styles = require('../mixins/styles');
-var Utils = require('../utils').default;
-var svg = require('virtual-dom/virtual-hyperscript/svg');
+// @ts-nocheck
 
-var map = {
+import Shape from '../mixins/shape';
+import Styles from '../mixins/styles';
+import Utils from '../utils';
+import svg from 'virtual-dom/virtual-hyperscript/svg';
+
+var { assign, keys } = Object;
+
+var textStylesMap = {
   textAlign: 'text-align',
   fontFamily: 'font-family',
   fontStyle: 'font-style',
@@ -13,41 +16,37 @@ var map = {
   letterSpacing: 'letter-spacing',
   textDecoration: 'text-decoration'
 };
-var keys = Object.keys(map);
+var textStylesKeys = keys(textStylesMap);
 
-var Text = function (text, x, y) {
-  this.shape();
-  this.styles();
-  this.state.text = text;
-  this.state.x = x;
-  this.state.y = y;
-  this.state.fontSize = 16;
-};
-
-Text.prototype = {
-  toPolygon: function () {
+class Text {
+  constructor(text, x, y) {
+    this.shape();
+    this.styles();
+    this.state.text = text;
+    this.state.x = x;
+    this.state.y = y;
+    this.state.fontSize = 16;
+  }
+  toPolygon() {
     throw new Error('You need the Rune.Font plugin to convert text to polygon');
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Text();
     copy.state.text = this.state.text;
-    for (var i = 0; i < keys.length; i++) {
-      copy.state[keys[i]] = this.state[keys[i]];
+    for (var i = 0; i < textStylesKeys.length; i++) {
+      copy.state[textStylesKeys[i]] = this.state[textStylesKeys[i]];
     }
     Utils.copyMixinVars(this, copy);
     Utils.groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     this.scaleStyles(scalar);
     this.state.fontSize *= scalar;
     this.changed();
     return this;
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     var attr = {
       x: Utils.s(this.state.x),
       y: Utils.s(this.state.y)
@@ -55,9 +54,11 @@ Text.prototype = {
     this.shapeAttributes(attr);
     this.stylesAttributes(attr);
 
-    for (var i = 0; i < keys.length; i++) {
-      if (this.state[keys[i]]) {
-        attr[map[keys[i]]] = Utils.s(this.state[keys[i]]);
+    for (var i = 0; i < textStylesKeys.length; i++) {
+      if (this.state[textStylesKeys[i]]) {
+        attr[textStylesMap[textStylesKeys[i]]] = Utils.s(
+          this.state[textStylesKeys[i]]
+        );
       }
     }
 
@@ -69,13 +70,13 @@ Text.prototype = {
 
     return svg('text', attr, this.state.text);
   }
-};
+}
 
 // Generate setters
-for (var i = 0; i < keys.length; i++) {
-  Text.prototype[keys[i]] = Utils.getSetter(keys[i]);
+for (var i = 0; i < textStylesKeys.length; i++) {
+  Text.prototype[textStylesKeys[i]] = Utils.getSetter(textStylesKeys[i]);
 }
 
 assign(Text.prototype, Shape, Styles, { type: 'text' });
 
-module.exports = Text;
+export default Text;

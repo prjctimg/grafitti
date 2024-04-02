@@ -1,20 +1,20 @@
-var assign = require('object-assign');
-var Shape = require('../mixins/shape');
-var Styles = require('../mixins/styles');
-var Ellipse = require('./ellipse');
-var Utils = require('../utils').default;
-var svg = require('virtual-dom/virtual-hyperscript/svg');
+// @ts-nocheck
+import Shape from '../mixins/shape';
+import Styles from '../mixins/styles';
+import Ellipse from './ellipse';
+import Utils from '../utils';
+import svg from 'virtual-dom/virtual-hyperscript/svg';
 
-var Circle = function (x, y, radius) {
-  this.shape();
-  this.styles();
-  this.state.x = x;
-  this.state.y = y;
-  this.state.radius = radius;
-};
-
-Circle.prototype = {
-  toPolygon: function (opts, parent) {
+var { assign } = Object;
+class Circle {
+  constructor(x, y, radius) {
+    this.shape();
+    this.styles();
+    this.state.x = x;
+    this.state.y = y;
+    this.state.radius = radius;
+  }
+  toPolygon(opts, parent) {
     var ellipse = new Ellipse(
       this.state.x,
       this.state.y,
@@ -25,30 +25,26 @@ Circle.prototype = {
     Utils.copyMixinVars(this, poly);
     Utils.groupLogic(poly, this.parent, parent);
     return poly;
-  },
-
-  radius: function (radius, relative) {
+  }
+  radius(radius, relative) {
     this.state.radius = relative ? this.state.radius + radius : radius;
     this.changed();
     return this;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     this.scaleStyles(scalar);
     this.state.radius *= scalar;
     this.changed();
     return this;
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Circle();
     copy.state.radius = this.state.radius;
     Utils.copyMixinVars(this, copy);
     Utils.groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     var attr = {
       cx: Utils.s(this.state.x),
       cy: Utils.s(this.state.y),
@@ -58,8 +54,8 @@ Circle.prototype = {
     this.stylesAttributes(attr);
     return svg('circle', attr);
   }
-};
+}
 
 assign(Circle.prototype, Shape, Styles, { type: 'circle' });
 
-module.exports = Circle;
+export default Circle;

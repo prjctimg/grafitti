@@ -1,23 +1,25 @@
-var assign = require('object-assign');
-var Shape = require('../mixins/shape');
-var Box = require('../mixins/box');
-var Styles = require('../mixins/styles');
-var Polygon = require('./polygon');
-var Utils = require('../utils').default;
-var svg = require('virtual-dom/virtual-hyperscript/svg');
+// @ts-nocheck
 
-var Ellipse = function (x, y, width, height) {
-  this.shape();
-  this.box();
-  this.styles();
-  this.state.x = x;
-  this.state.y = y;
-  this.state.width = width;
-  this.state.height = height;
-};
+import Shape from '../mixins/shape';
+import Box from '../mixins/box';
+import Styles from '../mixins/styles';
+import Polygon from './polygon';
+import Utils from '../utils';
+import svg from 'virtual-dom/virtual-hyperscript/svg';
 
-Ellipse.prototype = {
-  toPolygon: function (opts, parent) {
+var { assign } = Object;
+
+class Ellipse {
+  constructor(x, y, width, height) {
+    this.shape();
+    this.box();
+    this.styles();
+    this.state.x = x;
+    this.state.y = y;
+    this.state.width = width;
+    this.state.height = height;
+  }
+  toPolygon(opts, parent) {
     var numVectors = 16;
     var rx = this.state.width / 2;
     var ry = this.state.height / 2;
@@ -42,23 +44,20 @@ Ellipse.prototype = {
     Utils.groupLogic(poly, this.parent, parent);
 
     return poly;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     this.scaleBox(scalar);
     this.scaleStyles(scalar);
     this.changed();
     return this;
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Ellipse();
     Utils.copyMixinVars(this, copy);
     Utils.groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     var attr = {
       cx: Utils.s(this.state.x),
       cy: Utils.s(this.state.y),
@@ -69,8 +68,8 @@ Ellipse.prototype = {
     this.stylesAttributes(attr);
     return svg('ellipse', attr);
   }
-};
+}
 
 assign(Ellipse.prototype, Shape, Box, Styles, { type: 'ellipse' });
 
-module.exports = Ellipse;
+export default Ellipse;

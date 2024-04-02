@@ -1,9 +1,11 @@
-var assign = require('object-assign');
-var Shape = require('../mixins/shape');
-var Styles = require('../mixins/styles');
-var Vector = require('../vector').default;
-var Utils = require('../utils').default;
-var svg = require('virtual-dom/virtual-hyperscript/svg');
+// @ts-nocheck
+import Shape from '../mixins/shape';
+import Styles from '../mixins/styles';
+import Vector from '../vector';
+import Utils from '../utils';
+import svg from 'virtual-dom/virtual-hyperscript/svg';
+
+var { assign } = Object;
 
 var Line = function (x, y, x2, y2) {
   this.shape();
@@ -76,4 +78,4 @@ assign(Line.prototype, Shape, Styles, {
   }
 });
 
-module.exports = Line;
+export default Line;

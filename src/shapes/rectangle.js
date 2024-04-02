@@ -1,31 +1,32 @@
-var assign = require('object-assign');
+// @ts-nocheck
+
 var Shape = require('../mixins/shape');
 var Styles = require('../mixins/styles');
 var Box = require('../mixins/box');
-var Polygon = require('./polygon');
+var Polygon = require('./polygon').default;
 var Utils = require('../utils').default;
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
-var Rectangle = function (x, y, width, height) {
-  this.shape();
-  this.box();
-  this.styles();
-  this.state.x = x;
-  this.state.y = y;
-  this.state.width = width;
-  this.state.height = height;
-};
+var { assign } = Object;
 
-Rectangle.prototype = {
-  round: function (rx, ry) {
+class Rectangle {
+  constructor(x, y, width, height) {
+    this.shape();
+    this.box();
+    this.styles();
+    this.state.x = x;
+    this.state.y = y;
+    this.state.width = width;
+    this.state.height = height;
+  }
+  round(rx, ry) {
     if (!ry) ry = rx;
     this.state.rx = rx;
     this.state.ry = ry;
     this.changed();
     return this;
-  },
-
-  toPolygon: function (opts, parent) {
+  }
+  toPolygon(opts, parent) {
     var poly = new Polygon(this.state.x, this.state.y)
       .lineTo(0, 0)
       .lineTo(this.state.width, 0)
@@ -38,23 +39,20 @@ Rectangle.prototype = {
     Utils.groupLogic(poly, this.parent, parent);
 
     return poly;
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Rectangle();
     Utils.copyMixinVars(this, copy);
     Utils.groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     this.scaleBox(scalar);
     this.scaleStyles(scalar);
     this.changed();
     return this;
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     var attr = {
       x: Utils.s(this.state.x),
       y: Utils.s(this.state.y),
@@ -67,8 +65,8 @@ Rectangle.prototype = {
     this.stylesAttributes(attr);
     return svg('rect', attr);
   }
-};
+}
 
 assign(Rectangle.prototype, Shape, Box, Styles, { type: 'rectangle' });
 
-module.exports = Rectangle;
+export default Rectangle;

@@ -1,55 +1,52 @@
-var assign = require('object-assign');
+// @ts-nocheck
+
 var Shape = require('../mixins/shape');
 var Styles = require('../mixins/styles');
 var Anchor = require('../anchor');
 var Vector = require('../vector').default;
-var Polygon = require('./polygon');
+var Polygon = require('./polygon').default;
 var Utils = require('../utils').default;
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
-var Path = function (x, y) {
-  this.shape();
-  this.styles();
-  this.state.anchors = [];
-  if (typeof x !== 'undefined') this.state.x = x;
-  if (typeof y !== 'undefined') this.state.y = y;
-};
+var { assign } = Object;
 
-Path.prototype = {
-  moveTo: function (x, y) {
+class Path {
+  constructor(x, y) {
+    this.shape();
+    this.styles();
+    this.state.anchors = [];
+    if (typeof x !== 'undefined') this.state.x = x;
+    if (typeof y !== 'undefined') this.state.y = y;
+  }
+  moveTo(x, y) {
     this.state.anchors.push(new Anchor().setMove(x, y));
     this.changed();
     return this;
-  },
-
-  lineTo: function (x, y) {
+  }
+  lineTo(x, y) {
     this.checkStartMove();
     this.state.anchors.push(new Anchor().setLine(x, y));
     this.changed();
     return this;
-  },
-
-  curveTo: function (a, b, c, d, e, f) {
+  }
+  curveTo(a, b, c, d, e, f) {
     this.checkStartMove();
     this.state.anchors.push(new Anchor().setCurve(a, b, c, d, e, f));
     this.changed();
     return this;
-  },
-
-  closePath: function () {
+  }
+  closePath() {
     this.checkStartMove();
     this.state.anchors.push(new Anchor().setClose());
     this.changed();
     return this;
-  },
-
-  startVector: function () {
+  }
+  startVector() {
     return this.state.anchors[0] && this.state.anchors[0].command == 'move'
       ? this.state.anchors[0].vec1.copy()
       : new Vector(0, 0);
-  },
-
-  subpaths: function (parent) {
+  }
+  subpaths(parent) {
     var subs = [];
     var lastSplit = 0;
 
@@ -70,9 +67,8 @@ Path.prototype = {
     }
 
     return subs;
-  },
-
-  length: function () {
+  }
+  length() {
     var len = 0;
     var paths = this.subpaths(false);
 
@@ -98,9 +94,8 @@ Path.prototype = {
     }
 
     return len;
-  },
-
-  vectorAtLength: function (len) {
+  }
+  vectorAtLength(len) {
     var tmpLen = 0;
     var paths = this.subpaths(false);
 
@@ -134,13 +129,11 @@ Path.prototype = {
     }
 
     return this.startVector();
-  },
-
-  vectorAt: function (scalar) {
+  }
+  vectorAt(scalar) {
     return this.vectorAtLength(this.length() * scalar);
-  },
-
-  toPolygons: function (opts, parent) {
+  }
+  toPolygons(opts, parent) {
     var paths = this.subpaths(false);
     var polys = [];
 
@@ -163,9 +156,8 @@ Path.prototype = {
     }
 
     return polys;
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Path();
     copy.state.anchors = this.state.anchors.map(function (a) {
       return a.copy();
@@ -173,32 +165,28 @@ Path.prototype = {
     Utils.copyMixinVars(this, copy);
     Utils.groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     this.scaleStyles(scalar);
     this.state.anchors = this.state.anchors.map(function (anchor) {
       return anchor.multiply(scalar);
     });
     this.changed();
     return this;
-  },
-
-  fillRule: function (val) {
+  }
+  fillRule(val) {
     this.state.fillRule = val;
     this.changed();
     return this;
-  },
-
+  }
   // Paths must start with a moveTo. This function is checks if
   // there is a moveTo at the beginning, and adds one if not.
-  checkStartMove: function () {
+  checkStartMove() {
     if (this.state.anchors.length == 0) {
       this.moveTo(0, 0);
     }
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     var attr = this.shapeAttributes({});
     this.stylesAttributes(attr);
 
@@ -242,9 +230,8 @@ Path.prototype = {
 
     if (opts.debug) els = els.concat(this.renderDebug());
     return els;
-  },
-
-  renderDebug: function () {
+  }
+  renderDebug() {
     var t = this;
     var els = [];
 
@@ -297,8 +284,8 @@ Path.prototype = {
 
     return els;
   }
-};
+}
 
 assign(Path.prototype, Shape, Styles, { type: 'path' });
 
-module.exports = Path;
+export default Path;

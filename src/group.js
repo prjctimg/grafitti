@@ -6,6 +6,7 @@ import { copyMixinVars, groupLogic } from './utils';
 import svg from 'virtual-dom/virtual-hyperscript/svg';
 
 var { assign } = Object;
+
 class Group {
   constructor(x, y) {
     this.shape();

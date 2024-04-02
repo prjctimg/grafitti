@@ -1,11 +1,12 @@
-import assign from 'object-assign';
+// @ts-nocheck
+
 import Vector from './vector';
 import Anchor from './anchor';
 import { Color } from './color';
 import Group from './group';
 import Grid from './grid';
 import Node from './node';
-import Utils, { s, isBrowser, groupLogic } from './utils';
+import Utils from './utils';
 import Events from './events';
 import Circle from './shapes/circle';
 import Ellipse from './shapes/ellipse';
@@ -19,11 +20,11 @@ import Image from './shapes/image';
 import Box from './mixins/box';
 import Shape from './mixins/shape';
 import Styles from './mixins/styles';
-
 import diff from 'virtual-dom/diff';
 import patch from 'virtual-dom/patch';
 import createElement from 'virtual-dom/create-element';
 import svg from 'virtual-dom/virtual-hyperscript/svg';
+var { s, isBrowser, groupLogic } = Utils;
 
 // Constructor
 // --------------------------------------------------
@@ -151,7 +152,7 @@ class Grafitti {
     return e;
   }
   circle(x, y, radius, parent) {
-    var c = new Circle(x, y, radius, parent);
+    var c = new Circle(x, y, radius);
     groupLogic(c, this.stage, parent);
     return c;
   }
