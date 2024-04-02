@@ -1,13 +1,13 @@
-var utils = require('../utils');
+import { flatten } from '../utils';
 
 var Parent = {
-  setupParent: function() {
+  setupParent: function () {
     this.children = [];
     this.changedChildren = [];
     this.renderedChildren = [];
   },
 
-  addChild: function(child) {
+  addChild: function (child) {
     if (child.parent) child.parent.remove(child);
     this.children.push(child);
     child.parent = this;
@@ -15,7 +15,7 @@ var Parent = {
     child.changed();
   },
 
-  removeChild: function(child) {
+  removeChild: function (child) {
     if (child.parent !== this) {
       return;
     }
@@ -45,7 +45,7 @@ var Parent = {
     this.changed();
   },
 
-  renderChildren: function(opts) {
+  renderChildren: function (opts) {
     // loop through the changed children
     while (this.changedChildren.length > 0) {
       var childId = this.changedChildren.shift();
@@ -54,8 +54,8 @@ var Parent = {
     }
 
     // FIGURE OUT HOW NOT TO FLATTEN EVERY TIME!
-    return utils.flatten(this.renderedChildren, true);
+    return flatten(this.renderedChildren, true);
   }
 };
 
-module.exports = Parent;
+export default Parent;

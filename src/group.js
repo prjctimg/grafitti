@@ -1,12 +1,12 @@
 var assign = require('object-assign');
-var Shape = require('./mixins/shape');
-var Styles = require('./mixins/styles');
-var Parent = require('./mixins/parent');
+var Shape = require('./mixins/shape').default;
+var Styles = require('./mixins/styles').default;
+var Parent = require('./mixins/parent').default;
 var Utils = require('./utils');
 var Vector = require('./vector');
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
-var Group = function(x, y) {
+var Group = function (x, y) {
   this.shape();
   this.setupParent();
   if (typeof x !== 'undefined') this.state.x = x;
@@ -14,15 +14,15 @@ var Group = function(x, y) {
 };
 
 Group.prototype = {
-  add: function(child) {
+  add: function (child) {
     this.addChild(child);
   },
 
-  remove: function(child) {
+  remove: function (child) {
     this.removeChild(child);
   },
 
-  copy: function(parent) {
+  copy: function (parent) {
     var copy = new Group();
     for (var i = 0; i < this.children.length; i++) {
       this.children[i].copy(copy);
@@ -32,7 +32,7 @@ Group.prototype = {
     return copy;
   },
 
-  scale: function(scalar) {
+  scale: function (scalar) {
     for (var i = 0; i < this.children.length; i++) {
       this.children[i].state.x *= scalar;
       this.children[i].state.y *= scalar;
@@ -41,7 +41,7 @@ Group.prototype = {
     return this;
   },
 
-  render: function(opts) {
+  render: function (opts) {
     if (!this.children || this.children.length == 0) return;
     var attr = this.shapeAttributes({});
     this.stylesAttributes(attr);

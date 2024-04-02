@@ -1,7 +1,7 @@
-var Color = require('../color');
-var Utils = require('../utils');
+import { color } from '../color';
+import { s, getSetter } from '../utils';
 
-var map = {
+var stylesMap = {
   strokeWidth: 'stroke-width',
   strokeCap: 'stroke-linecap',
   strokeJoin: 'stroke-linejoin',
@@ -9,13 +9,13 @@ var map = {
   strokeDash: 'stroke-dasharray',
   strokeDashOffset: 'stroke-dashoffset'
 };
-var keys = Object.keys(map);
+var styleKeys = Object.keys(stylesMap);
 
 var Styles = {
-  styles: function(copy) {
+  styles: function (copy) {
     this.state = this.state || {};
-    this.state.fill = new Color(128);
-    this.state.stroke = new Color(0);
+    this.state.fill = color(128).output();
+    this.state.stroke = color(0).output();
 
     if (copy) {
       if (copy.state.fill === false || copy.state.fill === 'none') {
@@ -31,29 +31,29 @@ var Styles = {
       }
 
       // Copy basic attributes
-      for (var i = 0; i < keys.length; i++) {
-        if (copy.state[keys[i]]) {
-          this.state[keys[i]] = copy.state[keys[i]];
+      for (var i = 0; i < styleKeys.length; i++) {
+        if (copy.state[styleKeys[i]]) {
+          this.state[styleKeys[i]] = copy.state[styleKeys[i]];
         }
       }
     }
   },
 
-  fill: function(a, b, c, d, e) {
-    if (a === false || a === 'none') this.state.fill = a;
-    else this.state.fill = new Color(a, b, c, d, e);
+  fill: function (c) {
+    if (c === false || c === 'none') this.state.fill = c;
+    else this.state.fill = color(c).output();
     this.changed();
     return this;
   },
 
-  stroke: function(a, b, c, d, e) {
-    if (a === false || a === 'none') this.state.stroke = a;
-    else this.state.stroke = new Color(a, b, c, d, e);
+  stroke: function (c) {
+    if (c === false || c === 'none') this.state.stroke = c;
+    else this.state.stroke = color(c).output();
     this.changed();
     return this;
   },
 
-  scaleStyles: function(scalar) {
+  scaleStyles: function (scalar) {
     if (this.state.strokeWidth) {
       this.state.strokeWidth *= scalar;
     } else {
@@ -61,21 +61,15 @@ var Styles = {
     }
   },
 
-  stylesAttributes: function(attr) {
+  stylesAttributes: function (attr) {
     if (this.state.fill) {
       if (this.state.fill === 'none') {
         attr.fill = 'none';
       } else {
-        attr.fill =
-          'rgb(' +
-          this.state.fill.values.rgb[0] +
-          ', ' +
-          this.state.fill.values.rgb[1] +
-          ', ' +
-          this.state.fill.values.rgb[2] +
-          ')';
-        var alpha = this.state.fill.values.alpha;
-        if (alpha < 1) attr['fill-opacity'] = Utils.s(alpha);
+        attr.fill = color(this.state.fill).color2hex();
+
+        var alpha = color(this.state.fill).alpha();
+        if (alpha < 1) attr['fill-opacity'] = s(alpha);
       }
     }
 
@@ -83,22 +77,16 @@ var Styles = {
       if (this.state.stroke === 'none') {
         attr.stroke = 'none';
       } else {
-        attr.stroke =
-          'rgb(' +
-          this.state.stroke.values.rgb[0] +
-          ', ' +
-          this.state.stroke.values.rgb[1] +
-          ', ' +
-          this.state.stroke.values.rgb[2] +
-          ')';
-        var alpha = this.state.stroke.values.alpha;
-        if (alpha < 1) attr['stroke-opacity'] = Utils.s(alpha);
+        attr.stroke = color(this.state.stroke).color2hex();
+
+        var alpha = color(this.state.stroke).alpha();
+        if (alpha < 1) attr['stroke-opacity'] = s(alpha);
       }
     }
 
-    for (var i = 0; i < keys.length; i++) {
-      if (this.state[keys[i]]) {
-        attr[map[keys[i]]] = Utils.s(this.state[keys[i]]);
+    for (var i = 0; i < styleKeys.length; i++) {
+      if (this.state[styleKeys[i]]) {
+        attr[stylesMap[styleKeys[i]]] = s(this.state[styleKeys[i]]);
       }
     }
 
@@ -107,8 +95,8 @@ var Styles = {
 };
 
 // Generate setters
-for (var i = 0; i < keys.length; i++) {
-  Styles[keys[i]] = Utils.getSetter(keys[i]);
+for (var i = 0; i < styleKeys.length; i++) {
+  Styles[styleKeys[i]] = getSetter(styleKeys[i]);
 }
 
-module.exports = Styles;
+export default Styles;
