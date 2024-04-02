@@ -1,99 +1,103 @@
-var Utils = require("./utils");
+import Utils from './utils';
 var ROUND_PRECISION = 9;
 
-var Vector = function(x, y) {
-  this.x = x || 0;
-  this.y = y || 0;
-};
+var { degrees, radians, round } = Utils
 
-Vector.prototype = {
-  type: "vector",
+class Vector {
+  constructor(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.type='vector'
+  }
 
-  set: function(x, y) {
+
+
+  set (x, y) {
     this.x = x;
     this.y = y;
-  },
+  }
 
-  add: function(vec) {
+  add (vec) {
     return new Vector(this.x + vec.x, this.y + vec.y);
-  },
+  }
 
-  sub: function(vec) {
+  sub (vec) {
     return new Vector(this.x - vec.x, this.y - vec.y);
-  },
+  }
 
-  multiply: function(scalar) {
+  multiply (scalar) {
     return new Vector(this.x * scalar, this.y * scalar);
-  },
+  }
 
-  divide: function(scalar) {
+  divide (scalar) {
     var vec = new Vector(0, 0);
     if (scalar) {
       vec.x = this.x / scalar;
       vec.y = this.y / scalar;
     }
     return vec;
-  },
+  }
 
-  distance: function(vec) {
+  distance (vec) {
     return Math.sqrt(this.distanceSquared(vec));
-  },
+  }
 
-  distanceSquared: function(vec) {
+  distanceSquared (vec) {
     var dx = this.x - vec.x;
     var dy = this.y - vec.y;
     return dx * dx + dy * dy;
   },
 
-  lerp: function(vec, scalar) {
+  lerp (vec, scalar) {
     var x = (vec.x - this.x) * scalar + this.x;
     var y = (vec.y - this.y) * scalar + this.y;
     return new Vector(x, y);
-  },
+  }
 
-  dot: function(vec) {
+  dot (vec) {
     return this.x * vec.x + this.y * vec.y;
-  },
+  }
 
-  length: function() {
+  length () {
     return Math.sqrt(this.lengthSquared());
-  },
+  }
 
-  lengthSquared: function() {
+  lengthSquared () {
     return this.x * this.x + this.y * this.y;
-  },
+  }
 
-  normalize: function() {
+  normalize () {
     return this.divide(this.length());
-  },
+  }
 
-  rotation: function() {
-    return Utils.degrees(Math.atan2(this.y, this.x));
-  },
+  rotation () {
+    return degrees(Math.atan2(this.y, this.x));
+  }
 
-  rotate: function(degrees) {
-    var rad = Utils.radians(this.rotation() + degrees);
+  rotate (degrees) {
+    var rad = radians(this.rotation() + degrees);
     var len = this.length();
-    var x = Utils.round(Math.cos(rad) * len, ROUND_PRECISION);
-    var y = Utils.round(Math.sin(rad) * len, ROUND_PRECISION);
+    var x = round(Math.cos(rad) * len, ROUND_PRECISION);
+    var y = round(Math.sin(rad) * len, ROUND_PRECISION);
     return new Vector(x, y);
-  },
+  }
 
-  limit: function(max) {
+  limit (max) {
     const mSq = this.lengthSquared();
     if (mSq > max * max) {
       return this.divide(Math.sqrt(mSq)).multiply(max);
     }
     return this.copy();
-  },
-
-  copy: function() {
-    return new Vector(this.x, this.y);
-  },
-
-  toString: function() {
-    return "(x: " + this.x + ", y: " + this.y + ")";
   }
-};
 
-module.exports = Vector;
+  copy () {
+    return new Vector(this.x, this.y);
+  }
+
+  toString () {
+    return '(x: ' + this.x + ', y: ' + this.y + ')';
+  }
+}
+
+
+export default Vector;

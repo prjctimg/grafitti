@@ -1,7 +1,7 @@
 var assign = require('object-assign');
 var Shape = require('../mixins/shape');
 var Styles = require('../mixins/styles');
-var Utils = require('../utils');
+var Utils = require('../utils').default;
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
 var map = {
@@ -15,7 +15,7 @@ var map = {
 };
 var keys = Object.keys(map);
 
-var Text = function(text, x, y) {
+var Text = function (text, x, y) {
   this.shape();
   this.styles();
   this.state.text = text;
@@ -25,11 +25,11 @@ var Text = function(text, x, y) {
 };
 
 Text.prototype = {
-  toPolygon: function() {
+  toPolygon: function () {
     throw new Error('You need the Rune.Font plugin to convert text to polygon');
   },
 
-  copy: function(parent) {
+  copy: function (parent) {
     var copy = new Text();
     copy.state.text = this.state.text;
     for (var i = 0; i < keys.length; i++) {
@@ -40,14 +40,14 @@ Text.prototype = {
     return copy;
   },
 
-  scale: function(scalar) {
+  scale: function (scalar) {
     this.scaleStyles(scalar);
     this.state.fontSize *= scalar;
     this.changed();
     return this;
   },
 
-  render: function(opts) {
+  render: function (opts) {
     var attr = {
       x: Utils.s(this.state.x),
       y: Utils.s(this.state.y)

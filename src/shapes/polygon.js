@@ -1,11 +1,11 @@
 var assign = require('object-assign');
 var Shape = require('../mixins/shape');
 var Styles = require('../mixins/styles');
-var Vector = require('../vector');
-var Utils = require('../utils');
+var Vector = require('../vector').default;
+var Utils = require('../utils').default;
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
-var Polygon = function(x, y) {
+var Polygon = function (x, y) {
   this.shape();
   this.styles();
   this.state.vectors = [];
@@ -14,7 +14,7 @@ var Polygon = function(x, y) {
 };
 
 Polygon.prototype = {
-  lineTo: function(x, y) {
+  lineTo: function (x, y) {
     if (x instanceof Vector) {
       this.state.vectors.push(x);
     } else {
@@ -24,7 +24,7 @@ Polygon.prototype = {
     return this;
   },
 
-  length: function() {
+  length: function () {
     var len = 0;
     for (var i = 0; i < this.state.vectors.length; i++) {
       var start = this.state.vectors[i];
@@ -34,7 +34,7 @@ Polygon.prototype = {
     return len;
   },
 
-  vectorAtLength: function(len) {
+  vectorAtLength: function (len) {
     var tmpLen = 0;
 
     for (var i = 0; i < this.state.vectors.length; i++) {
@@ -54,11 +54,11 @@ Polygon.prototype = {
     return this.state.vectors[0].copy();
   },
 
-  vectorAt: function(scalar) {
+  vectorAt: function (scalar) {
     return this.vectorAtLength(this.length() * scalar);
   },
 
-  area: function() {
+  area: function () {
     var area = 0;
     for (var i = 0; i < this.state.vectors.length - 1; i++) {
       area +=
@@ -69,7 +69,7 @@ Polygon.prototype = {
     return Math.abs(area);
   },
 
-  bounds: function() {
+  bounds: function () {
     var xmax = undefined;
     var ymax = undefined;
     var xmin = undefined;
@@ -94,7 +94,7 @@ Polygon.prototype = {
     };
   },
 
-  centroid: function() {
+  centroid: function () {
     var areaAcc = 0.0;
     var xAcc = 0.0;
     var yAcc = 0.0;
@@ -111,7 +111,7 @@ Polygon.prototype = {
     return new Vector(x, y);
   },
 
-  toPolygon: function(opts, parent) {
+  toPolygon: function (opts, parent) {
     if (opts && opts.spacing) {
       var poly = new Polygon(this.state.x, this.state.y);
       var len = this.length();
@@ -130,9 +130,9 @@ Polygon.prototype = {
     return this;
   },
 
-  copy: function(parent) {
+  copy: function (parent) {
     var copy = new Polygon();
-    copy.state.vectors = this.state.vectors.map(function(v) {
+    copy.state.vectors = this.state.vectors.map(function (v) {
       return v.copy();
     });
     Utils.copyMixinVars(this, copy);
@@ -142,7 +142,7 @@ Polygon.prototype = {
 
   // Code from ContainsPoint function here:
   // http://polyk.ivank.net
-  contains: function(x, y) {
+  contains: function (x, y) {
     // get stage position
     var addPos = this.stagepos();
 
@@ -150,7 +150,7 @@ Polygon.prototype = {
     // This might be slow, so let's rewrite this at some point.
 
     var p = Utils.flatten(
-      this.state.vectors.map(function(vector) {
+      this.state.vectors.map(function (vector) {
         return [addPos.x + vector.x, addPos.y + vector.y];
       }, this)
     );
@@ -184,7 +184,7 @@ Polygon.prototype = {
       if (ay == by && Math.min(ax, bx) <= 0) return true;
       if (ay == by) continue;
 
-      var lx = ax + (bx - ax) * -ay / (by - ay);
+      var lx = ax + ((bx - ax) * -ay) / (by - ay);
       if (lx == 0) return true; // point on edge
       if (lx > 0) depth++;
       if (ay == 0 && lup && by > ay) depth--; // hit vertex, both up
@@ -195,19 +195,19 @@ Polygon.prototype = {
     return (depth & 1) == 1;
   },
 
-  scale: function(scalar) {
+  scale: function (scalar) {
     this.scaleStyles(scalar);
-    this.state.vectors = this.state.vectors.map(function(vec) {
+    this.state.vectors = this.state.vectors.map(function (vec) {
       return vec.multiply(scalar);
     });
     this.changed();
     return this;
   },
 
-  render: function(opts) {
+  render: function (opts) {
     var attr = {
       points: this.state.vectors
-        .map(function(vec) {
+        .map(function (vec) {
           return vec.x + ' ' + vec.y;
         })
         .join(' ')

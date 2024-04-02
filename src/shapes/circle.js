@@ -2,10 +2,10 @@ var assign = require('object-assign');
 var Shape = require('../mixins/shape');
 var Styles = require('../mixins/styles');
 var Ellipse = require('./ellipse');
-var Utils = require('../utils');
+var Utils = require('../utils').default;
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
-var Circle = function(x, y, radius) {
+var Circle = function (x, y, radius) {
   this.shape();
   this.styles();
   this.state.x = x;
@@ -14,7 +14,7 @@ var Circle = function(x, y, radius) {
 };
 
 Circle.prototype = {
-  toPolygon: function(opts, parent) {
+  toPolygon: function (opts, parent) {
     var ellipse = new Ellipse(
       this.state.x,
       this.state.y,
@@ -27,20 +27,20 @@ Circle.prototype = {
     return poly;
   },
 
-  radius: function(radius, relative) {
+  radius: function (radius, relative) {
     this.state.radius = relative ? this.state.radius + radius : radius;
     this.changed();
     return this;
   },
 
-  scale: function(scalar) {
+  scale: function (scalar) {
     this.scaleStyles(scalar);
     this.state.radius *= scalar;
     this.changed();
     return this;
   },
 
-  copy: function(parent) {
+  copy: function (parent) {
     var copy = new Circle();
     copy.state.radius = this.state.radius;
     Utils.copyMixinVars(this, copy);
@@ -48,7 +48,7 @@ Circle.prototype = {
     return copy;
   },
 
-  render: function(opts) {
+  render: function (opts) {
     var attr = {
       cx: Utils.s(this.state.x),
       cy: Utils.s(this.state.y),

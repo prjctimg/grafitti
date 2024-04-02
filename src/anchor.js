@@ -150,4 +150,4 @@ class Anchor {
   }
 }
 
-export { Anchor };
+export default Anchor;

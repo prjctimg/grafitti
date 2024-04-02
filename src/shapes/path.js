@@ -2,12 +2,12 @@ var assign = require('object-assign');
 var Shape = require('../mixins/shape');
 var Styles = require('../mixins/styles');
 var Anchor = require('../anchor');
-var Vector = require('../vector');
+var Vector = require('../vector').default;
 var Polygon = require('./polygon');
-var Utils = require('../utils');
+var Utils = require('../utils').default;
 var svg = require('virtual-dom/virtual-hyperscript/svg');
 
-var Path = function(x, y) {
+var Path = function (x, y) {
   this.shape();
   this.styles();
   this.state.anchors = [];
@@ -16,40 +16,40 @@ var Path = function(x, y) {
 };
 
 Path.prototype = {
-  moveTo: function(x, y) {
+  moveTo: function (x, y) {
     this.state.anchors.push(new Anchor().setMove(x, y));
     this.changed();
     return this;
   },
 
-  lineTo: function(x, y) {
+  lineTo: function (x, y) {
     this.checkStartMove();
     this.state.anchors.push(new Anchor().setLine(x, y));
     this.changed();
     return this;
   },
 
-  curveTo: function(a, b, c, d, e, f) {
+  curveTo: function (a, b, c, d, e, f) {
     this.checkStartMove();
     this.state.anchors.push(new Anchor().setCurve(a, b, c, d, e, f));
     this.changed();
     return this;
   },
 
-  closePath: function() {
+  closePath: function () {
     this.checkStartMove();
     this.state.anchors.push(new Anchor().setClose());
     this.changed();
     return this;
   },
 
-  startVector: function() {
+  startVector: function () {
     return this.state.anchors[0] && this.state.anchors[0].command == 'move'
       ? this.state.anchors[0].vec1.copy()
       : new Vector(0, 0);
   },
 
-  subpaths: function(parent) {
+  subpaths: function (parent) {
     var subs = [];
     var lastSplit = 0;
 
@@ -72,7 +72,7 @@ Path.prototype = {
     return subs;
   },
 
-  length: function() {
+  length: function () {
     var len = 0;
     var paths = this.subpaths(false);
 
@@ -100,7 +100,7 @@ Path.prototype = {
     return len;
   },
 
-  vectorAtLength: function(len) {
+  vectorAtLength: function (len) {
     var tmpLen = 0;
     var paths = this.subpaths(false);
 
@@ -136,11 +136,11 @@ Path.prototype = {
     return this.startVector();
   },
 
-  vectorAt: function(scalar) {
+  vectorAt: function (scalar) {
     return this.vectorAtLength(this.length() * scalar);
   },
 
-  toPolygons: function(opts, parent) {
+  toPolygons: function (opts, parent) {
     var paths = this.subpaths(false);
     var polys = [];
 
@@ -165,9 +165,9 @@ Path.prototype = {
     return polys;
   },
 
-  copy: function(parent) {
+  copy: function (parent) {
     var copy = new Path();
-    copy.state.anchors = this.state.anchors.map(function(a) {
+    copy.state.anchors = this.state.anchors.map(function (a) {
       return a.copy();
     });
     Utils.copyMixinVars(this, copy);
@@ -175,16 +175,16 @@ Path.prototype = {
     return copy;
   },
 
-  scale: function(scalar) {
+  scale: function (scalar) {
     this.scaleStyles(scalar);
-    this.state.anchors = this.state.anchors.map(function(anchor) {
+    this.state.anchors = this.state.anchors.map(function (anchor) {
       return anchor.multiply(scalar);
     });
     this.changed();
     return this;
   },
 
-  fillRule: function(val) {
+  fillRule: function (val) {
     this.state.fillRule = val;
     this.changed();
     return this;
@@ -192,18 +192,18 @@ Path.prototype = {
 
   // Paths must start with a moveTo. This function is checks if
   // there is a moveTo at the beginning, and adds one if not.
-  checkStartMove: function() {
+  checkStartMove: function () {
     if (this.state.anchors.length == 0) {
       this.moveTo(0, 0);
     }
   },
 
-  render: function(opts) {
+  render: function (opts) {
     var attr = this.shapeAttributes({});
     this.stylesAttributes(attr);
 
     attr.d = this.state.anchors
-      .map(function(a) {
+      .map(function (a) {
         if (a.command == 'move') {
           return 'M ' + a.vec1.x + ' ' + a.vec1.y;
         } else if (a.command == 'line') {
@@ -244,7 +244,7 @@ Path.prototype = {
     return els;
   },
 
-  renderDebug: function() {
+  renderDebug: function () {
     var t = this;
     var els = [];
 
