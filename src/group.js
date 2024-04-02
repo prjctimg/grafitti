@@ -1,54 +1,49 @@
-var assign = require('object-assign');
-var Shape = require('./mixins/shape').default;
-var Styles = require('./mixins/styles').default;
-var Parent = require('./mixins/parent').default;
-var Utils = require('./utils');
-var Vector = require('./vector');
-var svg = require('virtual-dom/virtual-hyperscript/svg');
+// @ts-nocheck
+import Shape from './mixins/shape';
+import Styles from './mixins/styles';
+import Parent from './mixins/parent';
+import { copyMixinVars, groupLogic } from './utils';
+import svg from 'virtual-dom/virtual-hyperscript/svg';
 
-var Group = function (x, y) {
-  this.shape();
-  this.setupParent();
-  if (typeof x !== 'undefined') this.state.x = x;
-  if (typeof y !== 'undefined') this.state.y = y;
-};
-
-Group.prototype = {
-  add: function (child) {
+var { assign } = Object;
+class Group {
+  constructor(x, y) {
+    this.shape();
+    this.setupParent();
+    if (typeof x !== 'undefined') this.state.x = x;
+    if (typeof y !== 'undefined') this.state.y = y;
+  }
+  add(child) {
     this.addChild(child);
-  },
-
-  remove: function (child) {
+  }
+  remove(child) {
     this.removeChild(child);
-  },
-
-  copy: function (parent) {
+  }
+  copy(parent) {
     var copy = new Group();
     for (var i = 0; i < this.children.length; i++) {
       this.children[i].copy(copy);
     }
-    Utils.copyMixinVars(this, copy);
-    Utils.groupLogic(copy, this.parent, parent);
+    copyMixinVars(this, copy);
+    groupLogic(copy, this.parent, parent);
     return copy;
-  },
-
-  scale: function (scalar) {
+  }
+  scale(scalar) {
     for (var i = 0; i < this.children.length; i++) {
       this.children[i].state.x *= scalar;
       this.children[i].state.y *= scalar;
       this.children[i].scale(scalar);
     }
     return this;
-  },
-
-  render: function (opts) {
+  }
+  render(opts) {
     if (!this.children || this.children.length == 0) return;
     var attr = this.shapeAttributes({});
     this.stylesAttributes(attr);
     return svg('g', attr, this.renderChildren(opts));
   }
-};
+}
 
 assign(Group.prototype, Shape, Styles, Parent, { type: 'group' });
 
-module.exports = Group;
+export default Group;

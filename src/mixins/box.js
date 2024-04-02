@@ -1,3 +1,4 @@
+// @ts-nocheck
 var Box = {
   box: function (copy) {
     this.state = this.state || {};

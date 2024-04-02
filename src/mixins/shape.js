@@ -114,13 +114,13 @@ var Shape = {
     });
   },
 
-  debugLine: function (x1, y1, x2, y2) {
+  debugLine: function (x1, y1, x2, y2, c) {
     return svg('line', {
       x1: s(x1),
       y1: s(y1),
       x2: s(x2),
       y2: s(y2),
-      stroke: 'rgb(212, 18, 229)',
+      stroke: c,
       fill: 'none'
     });
   }

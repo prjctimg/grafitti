@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { flatten } from '../utils';
 
 var Parent = {

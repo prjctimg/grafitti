@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { color } from '../color';
 import { s, getSetter } from '../utils';
 
