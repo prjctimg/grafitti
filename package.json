@@ -1,0 +1,54 @@
+{
+  "name": "libgrafitti",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "rune.js": "^1.1.8"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.3",
+    "@commitlint/config-conventional": "^19.0.3",
+    "commitizen": "^4.3.0",
+    "cz-emoji-conventional": "^1.0.2",
+    "eslint": "^8.53.0",
+    "typescript": "^5.0.2"
+  },
+  "scripts": {
+    "test": "npx jasmine",
+    "docs": "documentation",
+    "code:build": "node ./build.cjs",
+    "code:publish": "npm run code:build & npm run code:types",
+    "code:types": "dts-bundle-generator  -o  ./lib/huetiful.d.ts ./types/index.d.ts --no-banner",
+    "code:lint": "eslint --fix --ext ./src/*.js",
+    "code:format": "prettier \"./src/*.js\" --write",
+    "start": "nodemon app.js --watch ",
+    "commitlint": "commitlint --edit"
+  },
+  "husky": {
+    "hooks": {}
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "trailingComma": "none",
+    "bracketSpacing": true
+  },
+  "eslintConfig": {
+    "root": true,
+    "rules": {
+      "prefer-const": 0,
+      "no-console": 1,
+      "no-ternary": 0,
+      "no-var": 0,
+      "no-explicit-any": 0,
+      "no-useless-escape": 0
+    }
+  }
+}
