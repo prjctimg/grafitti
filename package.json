@@ -7,6 +7,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "huetiful-js": "file:../huetiful/huetiful-js-2.2.0.tgz",
     "rune.js": "^1.1.8"
   },
   "devDependencies": {
