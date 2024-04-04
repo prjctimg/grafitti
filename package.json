@@ -7,7 +7,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "huetiful-js": "file:../huetiful/huetiful-js-2.2.0.tgz"
+    "huetiful-js": "^2.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
