@@ -1,14 +1,13 @@
 {
-  "name": "libgrafitti",
+  "name": "grafitti",
   "version": "0.4.0",
-  "description": "",
+  "description": "JavaScript library for creating design systems based on Rune.js",
   "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "huetiful-js": "file:../huetiful/huetiful-js-2.2.0.tgz",
-    "rune.js": "^1.1.8"
+    "huetiful-js": "file:../huetiful/huetiful-js-2.2.0.tgz"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
